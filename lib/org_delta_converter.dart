@@ -1,7 +1,3 @@
 library org_delta_converter;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/org_to_delta.dart';
