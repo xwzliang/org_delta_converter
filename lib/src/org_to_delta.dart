@@ -7,11 +7,13 @@ import 'package:org_parser/org_parser.dart';
 class OrgToDelta {}
 
 /// Convert from org object parsed by package org_parser to delta
-class OrgNodesToDeltaConverter {
+class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
   final _delta = Delta();
-  Delta convert(List<OrgNode>? orgNodes) {
-    if (orgNodes != null) {
-      orgNodeListToDelta(orgNodes);
+
+  @override
+  Delta convert(List<OrgNode>? input) {
+    if (input != null) {
+      orgNodeListToDelta(input);
     }
     return _delta;
   }
