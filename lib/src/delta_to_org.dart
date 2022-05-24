@@ -19,7 +19,7 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
             return '';
           }, onNonMatch: (nonMatch) {
             if (nonMatch.isNotEmpty) {
-              _orgStringLines.add(nonMatch);
+              _orgStringLines.addAll(nonMatch.split('\n'));
             }
             return '';
           });
