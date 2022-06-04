@@ -6,6 +6,13 @@ import 'package:flutter_quill/flutter_quill.dart';
 class DeltaToOrgStringConverter extends Converter<Delta, String> {
   final _orgStringLines = <String>[];
 
+  // Make all sections sepcified number levels up
+  int promoteLevel;
+  // Make all sections sepcified number levels down
+  int demoteLevel;
+
+  DeltaToOrgStringConverter({this.promoteLevel = 0, this.demoteLevel = 0});
+
   @override
   String convert(Delta input) {
     for (var i = 0; i < input.length; i++) {
@@ -32,7 +39,7 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
           if (attributes.containsKey(Attribute.header.key)) {
             final lastLine = _orgStringLines.last;
             _orgStringLines.last =
-                '${"*" * attributes[Attribute.header.key]} $lastLine';
+                '${"*" * (attributes[Attribute.header.key] - promoteLevel + demoteLevel)} $lastLine';
           }
         }
       }

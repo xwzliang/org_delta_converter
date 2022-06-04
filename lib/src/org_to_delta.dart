@@ -9,6 +9,12 @@ class OrgToDelta {}
 /// Convert from org object parsed by package org_parser to delta
 class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
   final _delta = Delta();
+  // Make all sections sepcified number levels up
+  int promoteLevel;
+  // Make all sections sepcified number levels down
+  int demoteLevel;
+
+  OrgNodesToDeltaConverter({this.promoteLevel = 0, this.demoteLevel = 0});
 
   @override
   Delta convert(List<OrgNode>? input) {
@@ -34,7 +40,8 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
     } else if (orgNode is OrgSection) {
       _delta.insert(orgNode.headline.rawTitle);
       _delta.insert('\n', {
-        Attribute.header.key: orgNode.headline.level,
+        Attribute.header.key:
+            orgNode.headline.level - promoteLevel + demoteLevel,
         // Attribute.indent.key: orgNode.headline.level - 1,
       });
       if (orgNode.content != null) {
