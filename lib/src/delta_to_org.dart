@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:org_delta_converter/src/constants_provider.dart';
 import 'package:path/path.dart' as p;
 
 /// Convert from delta to org object defined by org_parser
@@ -41,7 +42,11 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
           } else {
             final attributes = operation.attributes!;
             if (attributes.containsKey(Attribute.link.key)) {
-              text = '[[${attributes[Attribute.link.key]}][$text]]';
+              if (!attributes[Attribute.link.key]
+                  .startsWith(ConstantsProvider.orgHttpLinkPrefix)) {
+                // http link use original text, other link use org link
+                text = '[[${attributes[Attribute.link.key]}][$text]]';
+              }
               _orgStringLines.add(text);
             }
             if (attributes.containsKey(Attribute.header.key)) {

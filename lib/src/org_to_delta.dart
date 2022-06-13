@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:org_delta_converter/src/constants_provider.dart';
 import 'package:org_parser/org_parser.dart';
 import 'package:path/path.dart' as p;
 
@@ -9,22 +10,6 @@ class OrgToDelta {}
 
 /// Convert from org object parsed by package org_parser to delta
 class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
-  static const orgFileLinkPrefix = 'file:';
-  static const imageFileNameExtensions = [
-    "png",
-    "jpeg",
-    "jpg",
-    "gif",
-    "tiff",
-    "tif",
-    "xbm",
-    "xpm",
-    "pbm",
-    "pgm",
-    "ppm",
-    "pnm",
-    "svg",
-  ];
   final _delta = Delta();
   // Make all sections sepcified number levels up
   int promoteLevel;
@@ -57,7 +42,7 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
     if (orgNode is OrgPlainText) {
       _delta.insert(orgNode.content);
     } else if (orgNode is OrgLink) {
-      if (orgNode.location.startsWith(orgFileLinkPrefix)) {
+      if (orgNode.location.startsWith(ConstantsProvider.orgFileLinkPrefix)) {
         // Handle file link
 
         final orgParsedFileLink =
@@ -66,7 +51,7 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
         final fileExtension = p.extension(filePathInLink);
         final fileExtensionWithoutDot = fileExtension.substring(1);
         // Is image
-        if (imageFileNameExtensions
+        if (ConstantsProvider.imageFileNameExtensions
             .contains(fileExtensionWithoutDot.toLowerCase())) {
           if (orgParsedFileLink.isRelative &&
               basePathForConvertFilePathToFullPath != null) {
@@ -77,6 +62,11 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
             _delta.insert({BlockEmbed.imageType: filePathInLink});
           }
         }
+      } else if (orgNode.location
+          .startsWith(ConstantsProvider.orgHttpLinkPrefix)) {
+        _delta.insert(orgNode.location, {
+          Attribute.link.key: orgNode.location,
+        });
       } else {
         _delta.insert(orgNode.description, {
           Attribute.link.key: orgNode.location,

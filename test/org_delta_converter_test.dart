@@ -12,4 +12,11 @@ void main() {
         .convert([orgDoc.content!]);
     expect(delta[0].value['image'], '/root/dir/resources/test.jpg');
   });
+  test('org http link', () {
+    const orgString = 'https://test.com';
+    final orgDoc = OrgDocument.parse(orgString);
+    final delta = OrgNodesToDeltaConverter().convert([orgDoc.content!]);
+    final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    expect(convertedOrgString, orgString);
+  });
 }
