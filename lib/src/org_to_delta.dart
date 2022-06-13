@@ -34,15 +34,16 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
 
   void orgNodeListToDelta(List<OrgNode> orgNodes, {bool shouldTrim = false}) {
     for (final orgNode in orgNodes) {
-      orgNodeToDelta(orgNode, shouldTrim: shouldTrim);
+      orgNodeToDelta(orgNode, shouldRemoveTrailingNewline: shouldTrim);
     }
   }
 
-  void orgNodeToDelta(OrgNode orgNode, {bool shouldTrim = false}) {
+  void orgNodeToDelta(OrgNode orgNode,
+      {bool shouldRemoveTrailingNewline = false}) {
     // print(orgNode);
     if (orgNode is OrgPlainText) {
-      if (shouldTrim) {
-        _delta.insert(orgNode.content.trim());
+      if (shouldRemoveTrailingNewline) {
+        _delta.insert(orgNode.content.replaceFirst(RegExp(r'\n+$'), ''));
       } else {
         _delta.insert(orgNode.content);
       }
@@ -50,7 +51,7 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
       for (final orgListItem in orgNode.items) {
         if (orgListItem is OrgListOrderedItem) {
           // _delta.insert(orgListItem.body);
-          orgNodeToDelta(orgListItem.body!, shouldTrim: true);
+          orgNodeToDelta(orgListItem.body!, shouldRemoveTrailingNewline: true);
           _delta.insert('\n', {
             Attribute.list.key: ConstantsProvider.deltaListAttributeOrderedValue
           });
@@ -95,13 +96,17 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
         // Attribute.indent.key: orgNode.headline.level - 1,
       });
       if (orgNode.content != null) {
-        orgNodeToDelta(orgNode.content!, shouldTrim: shouldTrim);
+        orgNodeToDelta(orgNode.content!,
+            shouldRemoveTrailingNewline: shouldRemoveTrailingNewline);
       }
-      orgNodeListToDelta(orgNode.sections, shouldTrim: shouldTrim);
+      orgNodeListToDelta(orgNode.sections,
+          shouldTrim: shouldRemoveTrailingNewline);
     } else if (orgNode is OrgContent) {
-      orgNodeListToDelta(orgNode.children, shouldTrim: shouldTrim);
+      orgNodeListToDelta(orgNode.children,
+          shouldTrim: shouldRemoveTrailingNewline);
     } else if (orgNode is OrgParagraph) {
-      orgNodeListToDelta(orgNode.body.children, shouldTrim: shouldTrim);
+      orgNodeListToDelta(orgNode.body.children,
+          shouldTrim: shouldRemoveTrailingNewline);
     }
   }
 }
