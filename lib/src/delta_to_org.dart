@@ -54,6 +54,14 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
               _orgStringLines.last =
                   '${"*" * (attributes[Attribute.header.key] - promoteLevel + demoteLevel)} $lastLine';
             }
+            if (attributes.containsKey(Attribute.list.key)) {
+              final lastLine = _orgStringLines.last;
+              if (attributes[Attribute.list.key] ==
+                  ConstantsProvider.deltaListAttributeOrderedValue) {
+                // ordered list
+                _orgStringLines.last = '1. $lastLine';
+              }
+            }
           }
         } else if (operation.value is Map) {
           var contentMap = operation.value as Map<String, dynamic>;
@@ -70,6 +78,6 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
         }
       }
     }
-    return _orgStringLines.join('\n');
+    return '${_orgStringLines.join("\n")}\n';
   }
 }

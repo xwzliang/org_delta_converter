@@ -17,6 +17,19 @@ void main() {
     final orgDoc = OrgDocument.parse(orgString);
     final delta = OrgNodesToDeltaConverter().convert([orgDoc.content!]);
     final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    expect(convertedOrgString.trim(), orgString);
+  });
+  test('org ordered list', () {
+    const orgString = '''
+1. list one
+1. list two
+1. list three
+''';
+    final orgDoc = OrgDocument.parse(orgString);
+    final delta = OrgNodesToDeltaConverter().convert([orgDoc.content!]);
+    final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    // print(delta);
+    // print(convertedOrgString);
     expect(convertedOrgString, orgString);
   });
 }

@@ -32,15 +32,30 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
     return _delta;
   }
 
-  void orgNodeListToDelta(List<OrgNode> orgNodes) {
+  void orgNodeListToDelta(List<OrgNode> orgNodes, {bool shouldTrim = false}) {
     for (final orgNode in orgNodes) {
-      orgNodeToDelta(orgNode);
+      orgNodeToDelta(orgNode, shouldTrim: shouldTrim);
     }
   }
 
-  void orgNodeToDelta(OrgNode orgNode) {
+  void orgNodeToDelta(OrgNode orgNode, {bool shouldTrim = false}) {
+    // print(orgNode);
     if (orgNode is OrgPlainText) {
-      _delta.insert(orgNode.content);
+      if (shouldTrim) {
+        _delta.insert(orgNode.content.trim());
+      } else {
+        _delta.insert(orgNode.content);
+      }
+    } else if (orgNode is OrgList) {
+      for (final orgListItem in orgNode.items) {
+        if (orgListItem is OrgListOrderedItem) {
+          // _delta.insert(orgListItem.body);
+          orgNodeToDelta(orgListItem.body!, shouldTrim: true);
+          _delta.insert('\n', {
+            Attribute.list.key: ConstantsProvider.deltaListAttributeOrderedValue
+          });
+        }
+      }
     } else if (orgNode is OrgLink) {
       if (orgNode.location.startsWith(ConstantsProvider.orgFileLinkPrefix)) {
         // Handle file link
@@ -80,13 +95,13 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
         // Attribute.indent.key: orgNode.headline.level - 1,
       });
       if (orgNode.content != null) {
-        orgNodeToDelta(orgNode.content!);
+        orgNodeToDelta(orgNode.content!, shouldTrim: shouldTrim);
       }
-      orgNodeListToDelta(orgNode.sections);
+      orgNodeListToDelta(orgNode.sections, shouldTrim: shouldTrim);
     } else if (orgNode is OrgContent) {
-      orgNodeListToDelta(orgNode.children);
+      orgNodeListToDelta(orgNode.children, shouldTrim: shouldTrim);
     } else if (orgNode is OrgParagraph) {
-      orgNodeListToDelta(orgNode.body.children);
+      orgNodeListToDelta(orgNode.body.children, shouldTrim: shouldTrim);
     }
   }
 }
