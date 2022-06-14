@@ -4,6 +4,20 @@ import 'package:org_delta_converter/org_delta_converter.dart';
 import 'package:org_parser/org_parser.dart';
 
 void main() {
+  test('org plain text', () {
+    const orgString = '''
+text text
+text text
+
+text text text
+
+text text
+''';
+    final orgDoc = OrgDocument.parse(orgString);
+    final delta = OrgNodesToDeltaConverter().convert([orgDoc.content!]);
+    final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    expect(convertedOrgString, orgString);
+  });
   test('org file link', () {
     const orgString = 'file:../../resources/test.jpg';
     final orgDoc = OrgDocument.parse(orgString);
@@ -89,6 +103,7 @@ Also, I think this argument might be related to the reason why [[id:b504357e-801
     const orgString = r'''
 * content
 test test
+
 test test
 1. list [[id:idtest][test link]] test test
 1. list two
@@ -101,6 +116,7 @@ test test
     const expectedConvertedOrgString = r'''
 * content
 test test
+
 test test
 1. list [[id:idtest][test link]] test test
 1. list two

@@ -32,7 +32,7 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
             if (text.contains('\n')) {
               // _orgStringLines.addAll(text.trim().split('\n'));
               text.splitMapJoin('\n\n', onMatch: (match) {
-                _orgStringLines.add('');
+                _orgStringLines.add('\n');
                 return '';
               }, onNonMatch: (nonMatch) {
                 if (nonMatch.isNotEmpty) {
@@ -117,7 +117,7 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
         }
       }
     }
-    String orgStringJoinedLinesString = _orgStringLines.join("\n");
+    String orgStringJoinedLinesString = _orgStringLines.join('\n');
     if (!orgStringJoinedLinesString.endsWith('\n')) {
       // Ensure a newline at the last
       orgStringJoinedLinesString = '$orgStringJoinedLinesString\n';
