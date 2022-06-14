@@ -65,12 +65,17 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
             // _delta.insert(orgListItem.body);
             orgNodeToDelta(orgListItem.body!,
                 shouldRemoveTrailingNewline: true);
-            if (orgListItem.body!.children.whereType<OrgContent>().isEmpty) {
-              _delta.insert('\n', {
-                Attribute.list.key:
-                    ConstantsProvider.deltaListAttributeOrderedValue,
-              });
-            }
+            _delta.insert('\n', {
+              Attribute.list.key:
+                  ConstantsProvider.deltaListAttributeOrderedValue,
+            });
+          } else if (orgListItem is OrgListUnorderedItem) {
+            orgNodeToDelta(orgListItem.body!,
+                shouldRemoveTrailingNewline: true);
+            _delta.insert('\n', {
+              Attribute.list.key:
+                  ConstantsProvider.deltaListAttributeUnorderedValue,
+            });
           }
         }
       }

@@ -2,6 +2,7 @@ class ConstantsProvider {
   static const orgFileLinkPrefix = 'file:';
   static const orgHttpLinkPrefix = 'http';
   static const deltaListAttributeOrderedValue = 'ordered';
+  static const deltaListAttributeUnorderedValue = 'bullet';
   static const imageFileNameExtensions = [
     "png",
     "jpeg",

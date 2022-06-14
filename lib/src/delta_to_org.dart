@@ -90,6 +90,15 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
                     newlinesInOrgStringLinesLastLine.join('\n');
                 // Add a new line for next list item
                 _orgStringLines.add('');
+              } else if (attributes[Attribute.list.key] ==
+                  ConstantsProvider.deltaListAttributeUnorderedValue) {
+                final newlinesInOrgStringLinesLastLine = lastLine.split('\n');
+                newlinesInOrgStringLinesLastLine.last =
+                    '- ${newlinesInOrgStringLinesLastLine.last}';
+                _orgStringLines.last =
+                    newlinesInOrgStringLinesLastLine.join('\n');
+                // Add a new line for next list item
+                _orgStringLines.add('');
               }
             }
           }

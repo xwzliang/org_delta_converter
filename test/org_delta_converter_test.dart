@@ -148,4 +148,33 @@ test test
     final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
     expect(convertedOrgString, orgString);
   });
+  test('org unordered list with inline link', () {
+    const orgString = '''
+- list [[id:idtest][test link]] test test
+- list two
+- list three
+- list four
+- list five
+''';
+    final orgDoc = OrgDocument.parse(orgString);
+    final delta = OrgNodesToDeltaConverter().convert([orgDoc.content!]);
+    final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    expect(convertedOrgString, orgString);
+  });
+  test('org unordered list with content', () {
+    const orgString = '''
+[[id:idtest][test link]]
+- list [[id:idtest][test link]] test test
+[[id:idtest][test link]]
+[[id:idtest][test link]]
+- list two
+test test
+[[id:idtest][test link]]
+[[id:idtest][test link]]
+''';
+    final orgDoc = OrgDocument.parse(orgString);
+    final delta = OrgNodesToDeltaConverter().convert([orgDoc.content!]);
+    final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    expect(convertedOrgString, orgString);
+  });
 }
