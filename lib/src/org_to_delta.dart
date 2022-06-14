@@ -49,12 +49,29 @@ class OrgNodesToDeltaConverter extends Converter<List<OrgNode>, Delta> {
       }
     } else if (orgNode is OrgList) {
       for (final orgListItem in orgNode.items) {
-        if (orgListItem is OrgListOrderedItem) {
-          // _delta.insert(orgListItem.body);
-          orgNodeToDelta(orgListItem.body!, shouldRemoveTrailingNewline: true);
-          _delta.insert('\n', {
-            Attribute.list.key: ConstantsProvider.deltaListAttributeOrderedValue
-          });
+        // print(orgListItem.bullet);
+        // list item has multiple lines or list only has one item
+        // don't treat it as a list item for delta
+        if (orgListItem.body!.children
+                    .where((element) => element.contains('\n'))
+                    .length >
+                1 ||
+            orgNode.items.length == 1) {
+          // Insert bullet number 1. 2. etc.
+          _delta.insert(orgListItem.bullet);
+          orgNodeToDelta(orgListItem.body!);
+        } else {
+          if (orgListItem is OrgListOrderedItem) {
+            // _delta.insert(orgListItem.body);
+            orgNodeToDelta(orgListItem.body!,
+                shouldRemoveTrailingNewline: true);
+            if (orgListItem.body!.children.whereType<OrgContent>().isEmpty) {
+              _delta.insert('\n', {
+                Attribute.list.key:
+                    ConstantsProvider.deltaListAttributeOrderedValue,
+              });
+            }
+          }
         }
       }
     } else if (orgNode is OrgLink) {

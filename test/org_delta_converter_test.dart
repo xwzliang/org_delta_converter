@@ -116,4 +116,36 @@ test test
     // print(convertedOrgString);
     expect(convertedOrgString, expectedConvertedOrgString);
   });
+  test('org list with content', () {
+    const orgString = '''
+[[id:idtest][test link]]
+1. list [[id:idtest][test link]] test test
+[[id:idtest][test link]]
+[[id:idtest][test link]]
+2. list two
+test test
+[[id:idtest][test link]]
+[[id:idtest][test link]]
+''';
+    final orgDoc = OrgDocument.parse(orgString);
+    final delta = OrgNodesToDeltaConverter().convert([orgDoc.content!]);
+    final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    expect(convertedOrgString, orgString);
+  });
+  test('org list with content which contains spaces at the beginning of line',
+      () {
+    const orgString = '''
+[[id:idtest][test link]]
+1. list [[id:idtest][test link]] test test
+    [[id:idtest][test link]]
+    [[id:idtest][test link]]
+2. list two
+    [[id:idtest][test link]]
+    [[id:idtest][test link]]
+''';
+    final orgDoc = OrgDocument.parse(orgString);
+    final delta = OrgNodesToDeltaConverter().convert([orgDoc.content!]);
+    final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    expect(convertedOrgString, orgString);
+  });
 }
