@@ -18,6 +18,26 @@ text text
     final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
     expect(convertedOrgString, orgString);
   });
+  test('org plain text with headers', () {
+    const orgString = '''
+text text
+text text
+* Header 1
+text text
+text text
+
+** Header 2
+text text text
+
+*** Header 3
+text text
+''';
+    final orgDoc = OrgDocument.parse(orgString);
+    final delta = OrgNodesToDeltaConverter()
+        .convert([orgDoc.content!, ...orgDoc.sections]);
+    final convertedOrgString = DeltaToOrgStringConverter().convert(delta);
+    expect(convertedOrgString, orgString);
+  });
   test('org file link', () {
     const orgString = 'file:../../resources/test.jpg';
     final orgDoc = OrgDocument.parse(orgString);

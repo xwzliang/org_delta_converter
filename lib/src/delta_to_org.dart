@@ -71,8 +71,11 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
             }
             if (attributes.containsKey(Attribute.header.key)) {
               final lastLine = _orgStringLines.last;
+              final newlinesInOrgStringLinesLastLine = lastLine.split('\n');
+              newlinesInOrgStringLinesLastLine.last =
+                  '${"*" * (attributes[Attribute.header.key] - promoteLevel + demoteLevel)} ${newlinesInOrgStringLinesLastLine.last}';
               _orgStringLines.last =
-                  '${"*" * (attributes[Attribute.header.key] - promoteLevel + demoteLevel)} $lastLine';
+                  newlinesInOrgStringLinesLastLine.join('\n');
               // Add a new line
               if (!lastLine.endsWith('\n')) {
                 _orgStringLines.add('');
