@@ -110,11 +110,13 @@ class DeltaToOrgStringConverter extends Converter<Delta, String> {
           if (contentMap.containsKey(BlockEmbed.imageType)) {
             final imagePath = contentMap[BlockEmbed.imageType] as String;
             if (basePathForConvertFilePathToRelativePath == null) {
-              _orgStringLines.add('[[file:$imagePath]]');
+              final pathInOrg = imagePath.replaceAll('\\', '/');
+              _orgStringLines.add('[[file:$pathInOrg]]');
             } else {
               final imageRelativePath = p.relative(imagePath,
                   from: basePathForConvertFilePathToRelativePath);
-              _orgStringLines.add('[[file:$imageRelativePath]]');
+              final pathInOrg = imageRelativePath.replaceAll('\\', '/');
+              _orgStringLines.add('[[file:$pathInOrg]]');
             }
           }
         }
